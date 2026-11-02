@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101712">
+<meta name="description" content="SnapDrop - Discover useful coupons and shopping deals.">
+<title>SnapDrop | Save More</title>
+<style>
+:root {
+  --bg:#101712;
+  --panel:#19251d;
+  --green:#39d98a;
+  --text:#f4f7f4;
+  --muted:#a4b2a8;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Arial,sans-serif;min-height:100vh;
+}
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 7%;border-bottom:1px solid #29372e;
+}
+.logo{font-size:27px;font-weight:800;color:var(--green)}
+.logo span{color:white}
+button,select{cursor:pointer;font:inherit}
+.lang{
+  background:var(--panel);color:white;border:1px solid #34463a;
+  border-radius:9px;padding:10px 14px;
+}
+.hero{
+  padding:65px 7% 45px;text-align:center;
+  background:radial-gradient(ellipse at top,#203c2b 0%,var(--bg) 70%);
+}
+.hero h1{font-size:clamp(32px,6vw,55px);margin:0 0 15px}
+.hero h1 span{color:var(--green)}
+.hero p{color:var(--muted);font-size:17px;line-height:1.7}
+.search{
+  max-width:550px;margin:28px auto 0;display:flex;gap:10px;
+}
+.search input{
+  flex:1;min-width:0;padding:14px;border-radius:10px;
+  border:1px solid #3b4b40;background:#19251d;color:white;
+}
+.search button,.deal button{
+  background:var(--green);color:#092015;border:0;
+  border-radius:9px;padding:12px 18px;font-weight:bold;
+}
+main{padding:25px 7% 65px;max-width:1250px;margin:auto}
+.section-title{font-size:25px;margin:20px 0}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:25px}
+.filter{
+  border:1px solid #34463a;background:var(--panel);
+  color:white;padding:10px 17px;border-radius:30px;
+}
+.filter.active{background:var(--green);color:#092015}
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:18px;
+}
+.deal{
+  background:var(--panel);border:1px solid #304137;
+  border-radius:16px;padding:20px;transition:.2s;
+}
+.deal:hover{transform:translateY(-4px);border-color:var(--green)}
+.deal-icon{font-size:36px}
+.deal h3{margin:14px 0 8px}
+.deal p{color:var(--muted);line-height:1.6}
+.status{color:var(--green);font-size:13px;margin:12px 0}
+.deal button{width:100%;margin-top:10px}
+footer{
+  border-top:1px solid #29372e;text-align:center;
+  padding:25px;color:var(--muted)
+}
+.empty{color:var(--muted);padding:25px 0}
+[dir="rtl"]{font-family:Arial,sans-serif}
+[dir="rtl"] .deal{text-align:right}
+@media(max-width:500px){
+ header{padding:17px 5%}
+ .hero{padding:45px 5%}
+ main{padding:20px 5% 50px}
+ .search{flex-direction:column}
+ .search button{padding:14px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Snap<span>Drop</span> ✦</div>
+  <button class="lang" id="language">العربية</button>
+</header>
+
+<section class="hero">
+  <h1 id="heading">Discover deals. <span>Save more.</span></h1>
+  <p id="subtitle">Find shopping offers and useful coupons in one place.</p>
+  <div class="search">
+    <input id="search" placeholder="Search deals and stores...">
+    <button id="searchBtn">Search</button>
+  </div>
+</section>
+
+<main>
+  <h2 class="section-title" id="dealsTitle">Featured deals</h2>
+  <div class="filters">
+    <button class="filter active" data-filter="all" id="all">All</button>
+    <button class="filter" data-filter="shopping" id="shopping">Shopping</button>
+    <button class="filter" data-filter="technology" id="technology">Technology</button>
+  </div>
+  <div class="grid" id="deals"></div>
+  <p class="empty" id="empty" hidden>No deals found.</p>
+</main>
+
+<footer id="footer">SnapDrop © 2026 — Save smarter.</footer>
+
+<script>
+const offers = [
+ {icon:"🛍️",name:"Shopping deals",desc:"Discover useful shopping offers.",category:"shopping"},
+ {icon:"💻",name:"Technology deals",desc:"Explore technology offers and savings.",category:"technology"},
+ {icon:"🎁",name:"Special offers",desc:"Find more ways to save while shopping.",category:"shopping"}
+];
+
+let lang=localStorage.getItem("snapdrop-language")||"en";
+let filter="all";
+
+const words={
+ en:{
+  heading:'Discover deals. <span>Save more.</span>',
+  subtitle:"Find shopping offers and useful coupons in one place.",
+  search:"Search deals and stores...",searchBtn:"Search",
+  deals:"Featured deals",all:"All",shopping:"Shopping",
+  technology:"Technology",empty:"No deals found.",
+  footer:"SnapDrop © 2026 — Save smarter.",
+  status:"Sample card — offer not verified",
+  button:"Coming soon"
+ },
+ ar:{
+  heading:'اكتشف العروض. <span>وفّر أكثر.</span>',
+  subtitle:"اكتشف عروض التسوق وكوبونات الخصم في مكان واحد.",
+  search:"ابحث عن العروض والمتاجر...",searchBtn:"بحث",
+  deals:"العروض المميزة",all:"الكل",shopping:"التسوق",
+  technology:"التكنولوجيا",empty:"لا توجد نتائج.",
+  footer:"SnapDrop © 2026 — تسوّق بذكاء.",
+  status:"بطاقة تجريبية — العرض غير متحقق منه",
+  button:"قريبًا"
+ }
+};
+
+function render(){
+ const w=words[lang];
+ document.documentElement.lang=lang;
+ document.documentElement.dir=lang==="ar"?"rtl":"ltr";
+ document.getElementById("language").textContent=lang==="ar"?"English":"العربية";
+ document.getElementById("heading").innerHTML=w.heading;
+ document.getElementById("subtitle").textContent=w.subtitle;
+ document.getElementById("search").placeholder=w.search;
+ document.getElementById("searchBtn").textContent=w.searchBtn;
+ document.getElementById("dealsTitle").textContent=w.deals;
+ document.getElementById("all").textContent=w.all;
+ document.getElementById("shopping").textContent=w.shopping;
+ document.getElementById("technology").textContent=w.technology;
+ document.getElementById("empty").textContent=w.empty;
+ document.getElementById("footer").textContent=w.footer;
+
+ const query=document.getElementById("search").value.toLowerCase();
+ const names=lang==="ar"
+ ?["عروض التسوق","عروض التكنولوجيا","عروض خاصة"]
+ :["Shopping deals","Technology deals","Special offers"];
+
+ const filtered=offers.map((o,i)=>({...o,name:names[i]}))
+ .filter(o=>(filter==="all"||o.category===filter)&&
+ (o.name.toLowerCase().includes(query)||o.desc.toLowerCase().includes(query)));
+
+ document.getElementById("deals").innerHTML=filtered.map(o=>`
+ <article class="deal">
+ <div class="deal-icon">${o.icon}</div>
+ <h3>${o.name}</h3>
+ <p>${o.desc}</p>
+ <div class="status">● ${w.status}</div>
+ <button type="button" disabled>${w.button}</button>
+ </article>`).join("");
+
+ document.getElementById("empty").hidden=filtered.length!==0;
+ document.querySelectorAll(".filter").forEach(b=>{
+ b.classList.toggle("active",b.dataset.filter===filter);
+ });
+}
+
+document.getElementById("language").addEventListener("click",()=>{
+ lang=lang==="en"?"ar":"en";
+ localStorage.setItem("snapdrop-language",lang);
+ render();
+});
+document.querySelectorAll(".filter").forEach(b=>{
+ b.addEventListener("click",()=>{
+ filter=b.dataset.filter;render();
+ });
+});
+document.getElementById("searchBtn").addEventListener("click",render);
+document.getElementById("search").addEventListener("input",render);
+render();
+</script>
+</body>
+</html>
